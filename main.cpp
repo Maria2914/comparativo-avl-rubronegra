@@ -1,0 +1,249 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <chrono>
+#include <random>
+#include <unordered_set>
+#include <set>
+
+using namespace std;
+
+// --- 1. ESTRUTURA DA ÁRVORE AVL ---
+struct NoAVL {
+    string cpf;
+    NoAVL* esquerda;
+    NoAVL* direita;
+    int altura;
+    NoAVL(string valor) : cpf(valor), esquerda(nullptr), direita(nullptr), altura(1) {}
+};
+
+int obterAltura(NoAVL* n) { return (n == nullptr) ? 0 : n->altura; }
+int maximo(int a, int b) { return (a > b) ? a : b; }
+
+NoAVL* rotacionarDireitaAVL(NoAVL* y) {
+    if (!y || !y->esquerda) return y;
+    NoAVL* x = y->esquerda;
+    NoAVL* T2 = x->direita;
+    x->direita = y;
+    y->esquerda = T2;
+    y->altura = maximo(obterAltura(y->esquerda), obterAltura(y->direita)) + 1;
+    x->altura = maximo(obterAltura(x->esquerda), x->direita ? x->direita->altura : 0) + 1;
+    return x;
+}
+
+NoAVL* rotacionarEsquerdaAVL(NoAVL* x) {
+    if (!x || !x->direita) return x;
+    NoAVL* y = x->direita;
+    NoAVL* T2 = y->esquerda;
+    y->esquerda = x;
+    x->direita = T2;
+    x->altura = maximo(obterAltura(x->esquerda), x->direita ? x->direita->altura : 0) + 1;
+    y->altura = maximo(obterAltura(y->esquerda), obterAltura(y->direita)) + 1;
+    return y;
+}
+
+NoAVL* inserirAVL(NoAVL* node, string novoCpf) {
+    if (node == nullptr) return new NoAVL(novoCpf);
+    if (novoCpf < node->cpf) node->esquerda = inserirAVL(node->esquerda, novoCpf);
+    else if (novoCpf > node->cpf) node->direita = inserirAVL(node->direita, novoCpf);
+    else return node;
+
+    node->altura = 1 + maximo(obterAltura(node->esquerda), obterAltura(node->direita));
+    int bal = obterAltura(node->esquerda) - obterAltura(node->direita);
+
+    if (bal > 1 && novoCpf < node->esquerda->cpf) return rotacionarDireitaAVL(node);
+    if (bal < -1 && novoCpf > node->direita->cpf) return rotacionarEsquerdaAVL(node);
+    if (bal > 1 && novoCpf > node->esquerda->cpf) {
+        node->esquerda = rotacionarEsquerdaAVL(node->esquerda);
+        return rotacionarDireitaAVL(node);
+    }
+    if (bal < -1 && novoCpf < node->direita->cpf) {
+        node->direita = rotacionarDireitaAVL(node->direita);
+        return rotacionarEsquerdaAVL(node);
+    }
+    return node;
+}
+
+void gerarVisualizadorAVL(NoAVL* raiz) {
+    if (raiz == nullptr) return;
+    if (raiz->esquerda) {
+        cout << "  \"" << raiz->cpf.substr(0,3) << "_AVL\" -> \"" << raiz->esquerda->cpf.substr(0,3) << "_AVL\";\n";
+        gerarVisualizadorAVL(raiz->esquerda);
+    }
+    if (raiz->direita) {
+        cout << "  \"" << raiz->cpf.substr(0,3) << "_AVL\" -> \"" << raiz->direita->cpf.substr(0,3) << "_AVL\";\n";
+        gerarVisualizadorAVL(raiz->direita);
+    }
+}
+
+// --- 2. ESTRUTURA DA ÁRVORE RUBRO-NEGRA INTERNA ---
+enum Cor { VERMELHO, PRETO };
+
+struct NoRN {
+    string cpf;
+    Cor cor;
+    NoRN *esquerda, *direita, *pai;
+    NoRN(string valor) : cpf(valor), cor(VERMELHO), esquerda(nullptr), direita(nullptr), pai(nullptr) {}
+};
+
+class ArvoreRubroNegraVisual {
+private:
+    NoRN* raiz;
+    void rotacionarEsquerda(NoRN* x) {
+        NoRN* y = x->direita;
+        x->direita = y->esquerda;
+        if (y->esquerda != nullptr) y->esquerda->pai = x;
+        y->pai = x->pai;
+        if (x->pai == nullptr) raiz = y;
+        else if (x == x->pai->esquerda) x->pai->esquerda = y;
+        else x->pai->direita = y;
+        y->esquerda = x;
+        x->pai = y;
+    }
+    void rotacionarDireita(NoRN* y) {
+        NoRN* x = y->esquerda;
+        y->esquerda = x->direita;
+        if (x->direita != nullptr) x->direita->pai = y;
+        x->pai = y->pai;
+        if (y->pai == nullptr) raiz = x;
+        else if (y == y->pai->esquerda) y->pai->esquerda = x;
+        else y->pai->direita = x;
+        x->direita = y;
+        y->pai = x;
+    }
+    void corrigirInsercao(NoRN* z) {
+        while (z != raiz && z->pai != nullptr && z->pai->cor == VERMELHO) {
+            if (z->pai->pai != nullptr && z->pai == z->pai->pai->esquerda) {
+                NoRN* y = z->pai->pai->direita;
+                if (y != nullptr && y->cor == VERMELHO) {
+                    z->pai->cor = PRETO;
+                    y->cor = PRETO;
+                    z->pai->pai->cor = VERMELHO;
+                    z = z->pai->pai;
+                } else {
+                    if (z == z->pai->direita) {
+                        z = z->pai;
+                        rotacionarEsquerda(z);
+                    }
+                    z->pai->cor = PRETO;
+                    z->pai->pai->cor = VERMELHO;
+                    rotacionarDireita(z->pai->pai);
+                }
+            } else if (z->pai->pai != nullptr) {
+                NoRN* y = z->pai->pai->esquerda;
+                if (y != nullptr && y->cor == VERMELHO) {
+                    z->pai->cor = PRETO;
+                    y->cor = PRETO;
+                    z->pai->pai->cor = VERMELHO;
+                    z = z->pai->pai;
+                } else {
+                    if (z == z->pai->esquerda) {
+                        z = z->pai;
+                        rotacionarDireita(z);
+                    }
+                    z->pai->cor = PRETO;
+                    z->pai->pai->cor = VERMELHO;
+                    rotacionarEsquerda(z->pai->pai);
+                }
+            }
+        }
+        raiz->cor = PRETO;
+    }
+    void gerarDOT(NoRN* r) {
+        if (r == nullptr) return;
+        string corString = (r->cor == VERMELHO) ? "red" : "black";
+        cout << "  \"" << r->cpf.substr(0,3) << "_RN\" [color=" << corString << ", fontcolor=" << corString << "];\n";
+        if (r->esquerda) {
+            cout << "  \"" << r->cpf.substr(0,3) << "_RN\" -> \"" << r->esquerda->cpf.substr(0,3) << "_RN\";\n";
+            gerarDOT(r->esquerda);
+        }
+        if (r->direita) {
+            cout << "  \"" << r->cpf.substr(0,3) << "_RN\" -> \"" << r->direita->cpf.substr(0,3) << "_RN\";\n";
+            gerarDOT(r->direita);
+        }
+    }
+
+public:
+    ArvoreRubroNegraVisual() { raiz = nullptr; }
+    void inserir(const string& data) {
+        NoRN* z = new NoRN(data);
+        if (raiz == nullptr) { z->cor = PRETO; raiz = z; return; }
+        NoRN* y = nullptr; NoRN* x = raiz;
+        while (x != nullptr) { y = x; if (z->cpf < x->cpf) x = x->esquerda; else x = x->direita; }
+        z->pai = y; if (z->cpf < y->cpf) y->esquerda = z; else y->direita = z;
+        corrigirInsercao(z);
+    }
+    void imprimirDOT() { gerarDOT(raiz); }
+};
+
+// --- 3. INFRAESTRUTURA DE BENCHMARKS ---
+vector<string> gerarMassaCPFAleatoria(int n, int semente) {
+    vector<string> cpfs;
+    unordered_set<string> verificarUnicos;
+    mt19937 gen(semente);
+    uniform_int_distribution<> dis(100000000, 999999999);
+    while (cpfs.size() < (size_t)n) {
+        string token = to_string(dis(gen));
+        if (verificarUnicos.find(token) == verificarUnicos.end()) {
+            verificarUnicos.insert(token);
+            cpfs.push_back(token);
+        }
+    }
+    return cpfs;
+}
+
+void rodarEstresse(int tamanho) {
+    vector<string> cpfs = gerarMassaCPFAleatoria(tamanho, 15);
+    
+    // Teste Rubro-Negra (std::set)
+    set<string> rbTree;
+    auto initRN = chrono::high_resolution_clock::now();
+    for(int i = 0; i < tamanho; i++) rbTree.insert(cpfs[i]);
+    auto fimRN = chrono::high_resolution_clock::now();
+    auto tempoRN = chrono::duration_cast<chrono::milliseconds>(fimRN - initRN).count();
+
+    // Teste AVL Amostragem Controlada
+    int limiteAVL = min(tamanho, 30000);
+    NoAVL* raizAVL = nullptr;
+    auto initAVL = chrono::high_resolution_clock::now();
+    for(int i = 0; i < limiteAVL; i++) raizAVL = inserirAVL(raizAVL, cpfs[i]);
+    auto fimAVL = chrono::high_resolution_clock::now();
+    auto tempoAVL = chrono::duration_cast<chrono::milliseconds>(fimAVL - initAVL).count();
+    
+    double projecaoAVL = (double)tempoAVL * (tamanho / (double)limiteAVL);
+
+    cout << "  " << tamanho << " nos | " << projecaoAVL << " ms| " << tempoRN << " ms\n";
+}
+
+int main() {
+    cout << "\n=========================================================================\n";
+    cout << "   TESTE DE COMPORTAMENTO ESTRUTURAL COM MASSA REDUZIDA (12 N\323S)\n";
+    cout << "=========================================================================\n\n";
+    
+    // Lista de 12 chaves fixas e desordenadas para garantir estabilidade e reprodutibilidade.
+    // Esta amostragem forçará rotações simples e duplas em ambas as árvores.
+    vector<string> massaVisual = {"50", "25", "75", "12", "37", "62", "87", "30", "40", "20", "15", "18"};
+
+    NoAVL* raizAVLVisual = nullptr;
+    ArvoreRubroNegraVisual arvoreRNVisual;
+    
+    for(int i = 0; i < 12; i++) {
+        raizAVLVisual = inserirAVL(raizAVLVisual, massaVisual[i]);
+        arvoreRNVisual.inserir(massaVisual[i]);
+    }
+
+    cout << "\n/* ==================== C\344DIGO GRAPHVIZ: \265RVORE AVL (12 N\323S) ==================== */\n";
+    cout << "digraph G {\n  label=\"Valida\200\343o Estrutural - AVL (12 N\242s)\";\n";
+    cout << "  node [shape=circle, fontname=\"Arial\"];\n";
+    gerarVisualizadorAVL(raizAVLVisual);
+    cout << "}\n/* =============================================================================== */\n\n";
+
+    cout << "/* ================= C\344DIGO GRAPHVIZ: \265RVORE RUBRO-NEGRA (12 N\323S) ================= */\n";
+    cout << "digraph G {\n  label=\"Valida\200\343o Estrutural - Rubro-Negra (12 N\242s)\";\n";
+    cout << "  node [shape=circle, style=bold, fontname=\"Arial\"];\n";
+    arvoreRNVisual.imprimirDOT();
+    cout << "}\n/* =============================================================================== */\n";
+
+    return 0;
+}

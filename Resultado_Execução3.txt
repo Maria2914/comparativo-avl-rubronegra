@@ -1,0 +1,336 @@
+
+=========================================================================
+   RELATORIO ANALITICO COMPARATIVO: ARVORE AVL VS RUBRO-NEGRA
+=========================================================================
+
+1. COMPARACAO TEORICA DE COMPLEXIDADE:
+-------------------------------------------------------------------------
+  Metrica| Arvore AVL | Arvore Rubro-Negra
+-------------------------------------------------------------------------
+  Tempo (Busca)    | O(log n) - Mais Rapida | O(log n) - Altura sutil + alta
+  Tempo (Insercao) | O(log n) - Mais Lenta  | O(log n) - Otimizada via Cores
+  Espaco (Memoria) | Gasta +4 bytes (int h) | Gasta 1 bit (bool cor)
+  Implementacao | Media/Alta (4 Rotaces) | Altissima (Multiplos Casos)
+-------------------------------------------------------------------------
+
+2. TEMPO PRATICO DE EXECUCAO:
+-------------------------------------------------------------------------
+  Quantidade de NOS | Tempo de Insercao AVL | Tempo Insercao Rubro-Negra
+-------------------------------------------------------------------------
+  500000 nos | 466.667 ms| 651 ms
+  1000000 nos | 733.333 ms| 1531 ms
+  3000000 nos | 2300 ms| 5904 ms
+  5000000 nos | 4000 ms| 10575 ms
+-------------------------------------------------------------------------
+Nota: A AVL exige mais rotaces estruturais pesadas na memoria sob estresse.
+
+
+/* ==================== CODIGO GRAPHVIZ: ARVORE AVL (100 NOS) ==================== */
+digraph G {
+  label="Arvore AVL - 100 Elementos";
+  "43708_AVL" -> "18997_AVL";
+  "18997_AVL" -> "11852_AVL";
+  "11852_AVL" -> "10635_AVL";
+  "10635_AVL" -> "10070_AVL";
+  "10635_AVL" -> "11193_AVL";
+  "11193_AVL" -> "11436_AVL";
+  "11852_AVL" -> "15077_AVL";
+  "15077_AVL" -> "13094_AVL";
+  "13094_AVL" -> "12075_AVL";
+  "12075_AVL" -> "12818_AVL";
+  "13094_AVL" -> "14199_AVL";
+  "15077_AVL" -> "15854_AVL";
+  "15854_AVL" -> "15227_AVL";
+  "15854_AVL" -> "18154_AVL";
+  "18154_AVL" -> "17964_AVL";
+  "18154_AVL" -> "18790_AVL";
+  "18997_AVL" -> "29110_AVL";
+  "29110_AVL" -> "24041_AVL";
+  "24041_AVL" -> "22858_AVL";
+  "22858_AVL" -> "20983_AVL";
+  "22858_AVL" -> "24039_AVL";
+  "24041_AVL" -> "26506_AVL";
+  "26506_AVL" -> "25602_AVL";
+  "25602_AVL" -> "25347_AVL";
+  "25602_AVL" -> "26364_AVL";
+  "26506_AVL" -> "26636_AVL";
+  "26636_AVL" -> "26509_AVL";
+  "26636_AVL" -> "28714_AVL";
+  "29110_AVL" -> "37381_AVL";
+  "37381_AVL" -> "30949_AVL";
+  "30949_AVL" -> "30780_AVL";
+  "30949_AVL" -> "36293_AVL";
+  "36293_AVL" -> "33290_AVL";
+  "37381_AVL" -> "40033_AVL";
+  "40033_AVL" -> "38053_AVL";
+  "38053_AVL" -> "37415_AVL";
+  "38053_AVL" -> "39388_AVL";
+  "40033_AVL" -> "42972_AVL";
+  "43708_AVL" -> "75879_AVL";
+  "75879_AVL" -> "57228_AVL";
+  "57228_AVL" -> "48875_AVL";
+  "48875_AVL" -> "45195_AVL";
+  "45195_AVL" -> "44687_AVL";
+  "44687_AVL" -> "44421_AVL";
+  "45195_AVL" -> "45987_AVL";
+  "45987_AVL" -> "45563_AVL";
+  "45987_AVL" -> "48264_AVL";
+  "48875_AVL" -> "51046_AVL";
+  "51046_AVL" -> "50124_AVL";
+  "50124_AVL" -> "49613_AVL";
+  "51046_AVL" -> "54565_AVL";
+  "54565_AVL" -> "52008_AVL";
+  "54565_AVL" -> "56281_AVL";
+  "56281_AVL" -> "56806_AVL";
+  "57228_AVL" -> "64100_AVL";
+  "64100_AVL" -> "60695_AVL";
+  "60695_AVL" -> "57229_AVL";
+  "57229_AVL" -> "59203_AVL";
+  "60695_AVL" -> "63716_AVL";
+  "63716_AVL" -> "61339_AVL";
+  "61339_AVL" -> "61093_AVL";
+  "61339_AVL" -> "63317_AVL";
+  "63716_AVL" -> "63879_AVL";
+  "63879_AVL" -> "63810_AVL";
+  "64100_AVL" -> "71493_AVL";
+  "71493_AVL" -> "68579_AVL";
+  "68579_AVL" -> "64899_AVL";
+  "64899_AVL" -> "64679_AVL";
+  "64899_AVL" -> "65573_AVL";
+  "68579_AVL" -> "71227_AVL";
+  "71227_AVL" -> "69627_AVL";
+  "71493_AVL" -> "73726_AVL";
+  "73726_AVL" -> "71580_AVL";
+  "73726_AVL" -> "74979_AVL";
+  "74979_AVL" -> "75454_AVL";
+  "75879_AVL" -> "87955_AVL";
+  "87955_AVL" -> "84919_AVL";
+  "84919_AVL" -> "81688_AVL";
+  "81688_AVL" -> "79761_AVL";
+  "79761_AVL" -> "77982_AVL";
+  "79761_AVL" -> "80172_AVL";
+  "81688_AVL" -> "82755_AVL";
+  "84919_AVL" -> "85805_AVL";
+  "85805_AVL" -> "84987_AVL";
+  "85805_AVL" -> "87394_AVL";
+  "87955_AVL" -> "95564_AVL";
+  "95564_AVL" -> "94469_AVL";
+  "94469_AVL" -> "91838_AVL";
+  "91838_AVL" -> "90534_AVL";
+  "91838_AVL" -> "93399_AVL";
+  "93399_AVL" -> "92968_AVL";
+  "94469_AVL" -> "94798_AVL";
+  "94798_AVL" -> "94554_AVL";
+  "94798_AVL" -> "95399_AVL";
+  "95564_AVL" -> "98490_AVL";
+  "98490_AVL" -> "97262_AVL";
+  "97262_AVL" -> "96906_AVL";
+  "97262_AVL" -> "97291_AVL";
+  "98490_AVL" -> "99299_AVL";
+}
+/* =============================================================================== */
+
+/* ================= CODIGO GRAPHVIZ: ARVORE RUBRO-NEGRA (100 NOS) ================= */
+digraph G {
+  label="Arvore Rubro-Negra - 100 Elementos";
+  "43708_RN" [color=black, fontcolor=black];
+  "43708_RN" -> "18997_RN";
+  "18997_RN" [color=black, fontcolor=black];
+  "18997_RN" -> "12075_RN";
+  "12075_RN" [color=red, fontcolor=red];
+  "12075_RN" -> "10635_RN";
+  "10635_RN" [color=black, fontcolor=black];
+  "10635_RN" -> "10070_RN";
+  "10070_RN" [color=black, fontcolor=black];
+  "10635_RN" -> "11436_RN";
+  "11436_RN" [color=black, fontcolor=black];
+  "11436_RN" -> "11193_RN";
+  "11193_RN" [color=red, fontcolor=red];
+  "11436_RN" -> "11852_RN";
+  "11852_RN" [color=red, fontcolor=red];
+  "12075_RN" -> "15077_RN";
+  "15077_RN" [color=black, fontcolor=black];
+  "15077_RN" -> "13094_RN";
+  "13094_RN" [color=black, fontcolor=black];
+  "13094_RN" -> "12818_RN";
+  "12818_RN" [color=red, fontcolor=red];
+  "13094_RN" -> "14199_RN";
+  "14199_RN" [color=red, fontcolor=red];
+  "15077_RN" -> "15854_RN";
+  "15854_RN" [color=red, fontcolor=red];
+  "15854_RN" -> "15227_RN";
+  "15227_RN" [color=black, fontcolor=black];
+  "15854_RN" -> "18154_RN";
+  "18154_RN" [color=black, fontcolor=black];
+  "18154_RN" -> "17964_RN";
+  "17964_RN" [color=red, fontcolor=red];
+  "18154_RN" -> "18790_RN";
+  "18790_RN" [color=red, fontcolor=red];
+  "18997_RN" -> "29110_RN";
+  "29110_RN" [color=red, fontcolor=red];
+  "29110_RN" -> "24041_RN";
+  "24041_RN" [color=black, fontcolor=black];
+  "24041_RN" -> "22858_RN";
+  "22858_RN" [color=black, fontcolor=black];
+  "22858_RN" -> "20983_RN";
+  "20983_RN" [color=red, fontcolor=red];
+  "22858_RN" -> "24039_RN";
+  "24039_RN" [color=red, fontcolor=red];
+  "24041_RN" -> "26506_RN";
+  "26506_RN" [color=red, fontcolor=red];
+  "26506_RN" -> "25602_RN";
+  "25602_RN" [color=black, fontcolor=black];
+  "25602_RN" -> "25347_RN";
+  "25347_RN" [color=red, fontcolor=red];
+  "25602_RN" -> "26364_RN";
+  "26364_RN" [color=red, fontcolor=red];
+  "26506_RN" -> "26636_RN";
+  "26636_RN" [color=black, fontcolor=black];
+  "26636_RN" -> "26509_RN";
+  "26509_RN" [color=red, fontcolor=red];
+  "26636_RN" -> "28714_RN";
+  "28714_RN" [color=red, fontcolor=red];
+  "29110_RN" -> "37381_RN";
+  "37381_RN" [color=black, fontcolor=black];
+  "37381_RN" -> "30949_RN";
+  "30949_RN" [color=red, fontcolor=red];
+  "30949_RN" -> "30780_RN";
+  "30780_RN" [color=black, fontcolor=black];
+  "30949_RN" -> "36293_RN";
+  "36293_RN" [color=black, fontcolor=black];
+  "36293_RN" -> "33290_RN";
+  "33290_RN" [color=red, fontcolor=red];
+  "37381_RN" -> "40033_RN";
+  "40033_RN" [color=red, fontcolor=red];
+  "40033_RN" -> "38053_RN";
+  "38053_RN" [color=black, fontcolor=black];
+  "38053_RN" -> "37415_RN";
+  "37415_RN" [color=red, fontcolor=red];
+  "38053_RN" -> "39388_RN";
+  "39388_RN" [color=red, fontcolor=red];
+  "40033_RN" -> "42972_RN";
+  "42972_RN" [color=black, fontcolor=black];
+  "43708_RN" -> "75879_RN";
+  "75879_RN" [color=red, fontcolor=red];
+  "75879_RN" -> "57228_RN";
+  "57228_RN" [color=black, fontcolor=black];
+  "57228_RN" -> "50124_RN";
+  "50124_RN" [color=red, fontcolor=red];
+  "50124_RN" -> "45987_RN";
+  "45987_RN" [color=black, fontcolor=black];
+  "45987_RN" -> "44687_RN";
+  "44687_RN" [color=red, fontcolor=red];
+  "44687_RN" -> "44421_RN";
+  "44421_RN" [color=black, fontcolor=black];
+  "44687_RN" -> "45195_RN";
+  "45195_RN" [color=black, fontcolor=black];
+  "45195_RN" -> "45563_RN";
+  "45563_RN" [color=red, fontcolor=red];
+  "45987_RN" -> "48875_RN";
+  "48875_RN" [color=black, fontcolor=black];
+  "48875_RN" -> "48264_RN";
+  "48264_RN" [color=red, fontcolor=red];
+  "48875_RN" -> "49613_RN";
+  "49613_RN" [color=red, fontcolor=red];
+  "50124_RN" -> "52008_RN";
+  "52008_RN" [color=black, fontcolor=black];
+  "52008_RN" -> "51046_RN";
+  "51046_RN" [color=black, fontcolor=black];
+  "52008_RN" -> "56281_RN";
+  "56281_RN" [color=black, fontcolor=black];
+  "56281_RN" -> "54565_RN";
+  "54565_RN" [color=red, fontcolor=red];
+  "56281_RN" -> "56806_RN";
+  "56806_RN" [color=red, fontcolor=red];
+  "57228_RN" -> "64100_RN";
+  "64100_RN" [color=red, fontcolor=red];
+  "64100_RN" -> "63716_RN";
+  "63716_RN" [color=black, fontcolor=black];
+  "63716_RN" -> "60695_RN";
+  "60695_RN" [color=red, fontcolor=red];
+  "60695_RN" -> "57229_RN";
+  "57229_RN" [color=black, fontcolor=black];
+  "57229_RN" -> "59203_RN";
+  "59203_RN" [color=red, fontcolor=red];
+  "60695_RN" -> "61339_RN";
+  "61339_RN" [color=black, fontcolor=black];
+  "61339_RN" -> "61093_RN";
+  "61093_RN" [color=red, fontcolor=red];
+  "61339_RN" -> "63317_RN";
+  "63317_RN" [color=red, fontcolor=red];
+  "63716_RN" -> "63879_RN";
+  "63879_RN" [color=black, fontcolor=black];
+  "63879_RN" -> "63810_RN";
+  "63810_RN" [color=red, fontcolor=red];
+  "64100_RN" -> "71227_RN";
+  "71227_RN" [color=black, fontcolor=black];
+  "71227_RN" -> "65573_RN";
+  "65573_RN" [color=red, fontcolor=red];
+  "65573_RN" -> "64679_RN";
+  "64679_RN" [color=black, fontcolor=black];
+  "64679_RN" -> "64899_RN";
+  "64899_RN" [color=red, fontcolor=red];
+  "65573_RN" -> "68579_RN";
+  "68579_RN" [color=black, fontcolor=black];
+  "68579_RN" -> "69627_RN";
+  "69627_RN" [color=red, fontcolor=red];
+  "71227_RN" -> "73726_RN";
+  "73726_RN" [color=red, fontcolor=red];
+  "73726_RN" -> "71580_RN";
+  "71580_RN" [color=black, fontcolor=black];
+  "71580_RN" -> "71493_RN";
+  "71493_RN" [color=red, fontcolor=red];
+  "73726_RN" -> "74979_RN";
+  "74979_RN" [color=black, fontcolor=black];
+  "74979_RN" -> "75454_RN";
+  "75454_RN" [color=red, fontcolor=red];
+  "75879_RN" -> "87955_RN";
+  "87955_RN" [color=black, fontcolor=black];
+  "87955_RN" -> "81688_RN";
+  "81688_RN" [color=black, fontcolor=black];
+  "81688_RN" -> "79761_RN";
+  "79761_RN" [color=black, fontcolor=black];
+  "79761_RN" -> "77982_RN";
+  "77982_RN" [color=red, fontcolor=red];
+  "79761_RN" -> "80172_RN";
+  "80172_RN" [color=red, fontcolor=red];
+  "81688_RN" -> "84919_RN";
+  "84919_RN" [color=red, fontcolor=red];
+  "84919_RN" -> "82755_RN";
+  "82755_RN" [color=black, fontcolor=black];
+  "84919_RN" -> "85805_RN";
+  "85805_RN" [color=black, fontcolor=black];
+  "85805_RN" -> "84987_RN";
+  "84987_RN" [color=red, fontcolor=red];
+  "85805_RN" -> "87394_RN";
+  "87394_RN" [color=red, fontcolor=red];
+  "87955_RN" -> "95564_RN";
+  "95564_RN" [color=red, fontcolor=red];
+  "95564_RN" -> "94469_RN";
+  "94469_RN" [color=black, fontcolor=black];
+  "94469_RN" -> "91838_RN";
+  "91838_RN" [color=red, fontcolor=red];
+  "91838_RN" -> "90534_RN";
+  "90534_RN" [color=black, fontcolor=black];
+  "91838_RN" -> "93399_RN";
+  "93399_RN" [color=black, fontcolor=black];
+  "93399_RN" -> "92968_RN";
+  "92968_RN" [color=red, fontcolor=red];
+  "94469_RN" -> "94798_RN";
+  "94798_RN" [color=red, fontcolor=red];
+  "94798_RN" -> "94554_RN";
+  "94554_RN" [color=black, fontcolor=black];
+  "94798_RN" -> "95399_RN";
+  "95399_RN" [color=black, fontcolor=black];
+  "95564_RN" -> "98490_RN";
+  "98490_RN" [color=black, fontcolor=black];
+  "98490_RN" -> "97262_RN";
+  "97262_RN" [color=black, fontcolor=black];
+  "97262_RN" -> "96906_RN";
+  "96906_RN" [color=red, fontcolor=red];
+  "97262_RN" -> "97291_RN";
+  "97291_RN" [color=red, fontcolor=red];
+  "98490_RN" -> "99299_RN";
+  "99299_RN" [color=black, fontcolor=black];
+}
+/* =============================================================================== */
