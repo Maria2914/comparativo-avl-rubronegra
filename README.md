@@ -1,6 +1,8 @@
 # comparativo-avl-rubronegra
 Estudo comparativo de desempenho e estresse de inserção entre Árvore AVL e Árvore Rubro-Negra utilizando C++ e CPFs.
 
+
+
 # Análise Comparativa de Estruturas de Dados Autocompensadoras sob Estresse de Ingestão
 
 Este repositório contém a infraestrutura de testes em C++ desenvolvida para avaliar a eficiência computacional entre a **Árvore AVL** (implementação manual) e a **Árvore Rubro-Negra** (via `std::set`), focando estritamente na fase de carga, alocação de memória e rebalanceamento estrutural.
