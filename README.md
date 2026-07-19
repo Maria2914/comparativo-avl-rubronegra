@@ -13,7 +13,7 @@ O foco analítico deste estudo delimita-se especificamente à **Fase de Ingestã
 ## Estrutura do Projeto
 
 * `main.cpp`: Código-fonte principal contendo a geração pseudoaleatória de chaves via Mersenne Twister, estruturas de dados e o pipeline de medição.
-* Massa de Testes: Lotes de 500 mil, 1 milhão e 3 milhões de chaves de CPF exclusivas.
+* Massa de Testes: Lotes de 500 mil, 1 milhão, 3 milhões e 5 Milhões de chaves de CPF exclusivas.
 
 ## Como Executar o Experimento
 
