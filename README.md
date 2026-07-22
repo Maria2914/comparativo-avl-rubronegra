@@ -1,25 +1,28 @@
-# comparativo-avl-rubronegra
-Estudo comparativo de desempenho e estresse de inserção entre Árvore AVL e Árvore Rubro-Negra utilizando C++ e CPFs.
+Análise Comparativa: Árvores AVL vs. Rubro-Negra na Indexação de CPFs
 
+Estudo experimental e comparativo entre as estruturas de dados AVL e Rubro-Negra (ambas implementadas manualmente em C++), avaliando o desempenho em operações de inserção, busca e remoção sob diferentes padrões de entrada (aleatória e ordenada) com até 5 milhões de registros sintéticos de CPF.
 
+Principais Destaques & Conclusões
+Sem Vencedor Universal:
 
-# Análise Comparativa de Estruturas de Dados Autocompensadoras sob Estresse de Ingestão
+Inserção Aleatória: A árvore Rubro-Negra é ~4–10% mais rápida (devido a menos rotações/rebalancing).
 
-Este repositório contém a infraestrutura de testes em C++ desenvolvida para avaliar a eficiência computacional entre a **Árvore AVL** (implementação manual) e a **Árvore Rubro-Negra** (via `std::set`), focando estritamente na fase de carga, alocação de memória e rebalanceamento estrutural.
+Remoção Aleatória: A AVL é ~10–16% mais rápida.
 
-## Escopo da Pesquisa
-O foco analítico deste estudo delimita-se especificamente à **Fase de Ingestão e Estruturação de Dados (Inserção Massiva)**. O objetivo é quantificar o custo computacional puro de rearranjo de ponteiros e rebalanceamento quando submetidos a lotes progressivos de dados em cenários realistas de alta escrita (como processos de *Bulk Loading* em bancos de dados).
+Busca: Ambas empatam na média de comparações, embora a AVL garanta uma altura máxima ~2× menor no pior caso de entrada ordenada (23 vs 42 em 5M).
 
-## Estrutura do Projeto
+Estrutura do CPF & Sharding:
 
-* `main.cpp`: Código-fonte principal contendo a geração pseudoaleatória de chaves via Mersenne Twister, estruturas de dados e o pipeline de medição.
-* Massa de Testes: Lotes de 500 mil, 1 milhão, 3 milhões e 5 Milhões de chaves de CPF exclusivas.
+Índice Particionado: Dividir os dados em 10 árvores pelo 9º dígito (região fiscal) acelerou a consulta regional em ~5×.
 
-## Como Executar o Experimento
+Árvores vs. Tabela Hash (unordered_set): A Hash vence em buscas pontuais, mas as árvores balanceadas são >150× mais rápidas em consultas por intervalo/range e ordens sequenciais.
 
-Para compilar e rodar o benchmark em sua máquina local, certifique-se de ter um compilador que suporte C++ 11 ou superior e execute:
+Complexidade & Manutenibilidade: A AVL apresentou implementação consideravelmente mais simples do que a Rubro-Negra (cujo fixup de remoção é propenso a erros).
 
-```bash
-g++ -O3 main.cpp -o benchmark
-./benchmark
+Linguagem: C++11 / C++17 (G++ 11.4 -O3)
 
+Dados Sintéticos: CPFs gerados via algoritmo Mersenne Twister (semente fixa, dígitos verificadores válidos e distribuição populacional por região fiscal — em conformidade com a LGPD).
+
+Ambiente: Ubuntu 22.04 LTS (4 vCPU, 3.8 GiB RAM).
+
+Métricas Avaliadas: Tempo de execução (ms), altura máxima da árvore, comprimento médio de caminho e falhas de validação.
